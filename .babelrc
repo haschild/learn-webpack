@@ -1,0 +1,7 @@
+{
+    "presets": [
+        "react",
+        "env" // babel-preset-env
+        // "es2015" babel-preset-es2015 这个包已经过时了，不建议用
+    ]
+}
