@@ -10,6 +10,10 @@ var website = {
 // --这两个是把不需要的 css 消除掉
 const glob = require("glob")
 const purifycssplugin = require("purifycss-webpack")
+const webpack = require("webpack")
+// 可以看到自己加载的依赖包，但是有点不清楚怎么用
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 // -- 
 module.exports = {
     mode: "development",
@@ -26,7 +30,7 @@ module.exports = {
         // 打包的路径
         path: path.resolve(path.dirname(__dirname), "dist"),
         // 打包的文件名
-        filename: "./static/js/[name][chunkhash:8].js", // [name] 告诉我们入口是什么名字 bundle 后就是什么名字
+        filename: "./static/js/[name][hash:16].js", // [name] 告诉我们入口是什么名字 bundle 后就是什么名字
         publicPath: website.publicPath // 处理静态文件使用(如果不加，css里引用了图片是找不到的)
 
     },
@@ -123,7 +127,7 @@ module.exports = {
                 removeAttributeQuotes: true  //removeAttrubuteQuotes是却掉属性的双引号。
             },
             hash: true,
-            template: "./src/index.html"
+            template: "./src/index.html" //是要打包的html模版路径和文件名称
         }),
         //将 css 提取到指定的文件里
         new ExtractTextPlugin("./static/css/index.css"),
@@ -137,6 +141,11 @@ module.exports = {
 
         // }),
         new cleanwebpackplugin(),
+        new webpack.HotModuleReplacementPlugin(),// 如果你想用 chunkhash 配置缓存，那么就需要把热替换给注释掉
+        // new BundleAnalyzerPlugin() 可以查看自己加载的 module 不过有点不明所以
+        // new MiniCssExtractPlugin({
+        //     filename: "[name].css"
+        // })
     ],
     // 配置webpack开发服务
     devServer: {
@@ -144,10 +153,34 @@ module.exports = {
         contentBase: path.resolve(__dirname, "../dist"),
         host: "localhost",
         compress: true,
-        port: 8888
+        port: 8888,
+        hot: true
     },
     resolve: {
         extensions: [".ts", ".js", ".css"]
+    },
+    optimization: {
+        splitChunks: {
+            chunks: 'async',
+            minSize: 30000,
+            maxSize: 0,
+            minChunks: 1,
+            maxAsyncRequests: 5,
+            maxInitialRequests: 3,
+            automaticNameDelimiter: '~',
+            name: true,
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10
+                },
+                default: {
+                    minChunks: 2,
+                    priority: -20,
+                    reuseExistingChunk: true
+                }
+            }
+        }
     }
 
 }

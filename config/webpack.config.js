@@ -17,16 +17,16 @@ module.exports = {
     // 入口文件的配置
     entry: {
         // 属性的名字是可以随意写的。入口有几个就会 bundle 几个文件
-        main: "./src/index.js",
-        // bundle: path.resolve(__dirname, "../src/main.js") // 可以获取当前的路径作为基础
+        // main: "./src/index.js",
+        bundle: path.resolve(__dirname, "../src/main.js") // 可以获取当前的路径作为基础
     },
     devtool: "inline-source-map",
     output: {
-        // 打包的路径
+        // 打包的根路径，这个是需要绝对路径的
         path: path.resolve(path.dirname(__dirname), "dist"),
         // 打包的文件名
-        filename: "[name][hash:8].js", // [name] 告诉我们入口是什么名字 bundle 后就是什么名字
-        publicPath: website.publicPath // 处理静态文件使用(如果不加，css里引用了图片是找不到的)
+        filename: "[id][chunkhash:16].js", // [name] 告诉我们入口是什么名字 bundle 后就是什么名字 hash：每次打包都会变化；chunkhash：当chunk不更改，那么chunkhash就不会更改
+        publicPath: website.publicPath // 是针对浏览器，它可以是一个相对的路径或者是一个绝对的路径，主要是引用静态问文件的时候会用到，如果是在不同域名下，那么推荐是用绝对的路径
 
     },
     // 模块：例如css，图片怎么加载和压缩
@@ -103,6 +103,7 @@ module.exports = {
             minify: { //是对html文件进行压缩
                 removeAttributeQuotes: true  //removeAttrubuteQuotes是却掉属性的双引号。
             },
+            inject: true,
             hash: true,
             template: "./src/index.html"
         }),
@@ -117,7 +118,6 @@ module.exports = {
 
 
         // }),
-        new webpack.HotModuleReplacementPlugin()
     ],
     // 配置webpack开发服务
     devServer: {
@@ -126,7 +126,7 @@ module.exports = {
         host: "localhost",
         compress: true,
         port: 8888,
-        hot: true
+
     },
     // 默认查找的文件
     resolve: {

@@ -1,5 +1,5 @@
 body{
-    background:gray;
+   
     color: olivedrab;
     font-weight: 600
 }
@@ -9,6 +9,7 @@ body{
     width: 400px;
     border-radius: 50%;
     transform: all 1s;
+    opacity: 0.1;
 }
 div>button{
     border-radius:5px;
