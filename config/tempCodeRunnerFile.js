@@ -142,8 +142,7 @@ module.exports = {
             filename: "header.html",
             inject: true,
             hash: true,
-            chunks: ["header"],
-
+            chunks: "header",
             template: "./src/component/header/header.html" //是要打包的html模版路径和文件名称
         }),
         //将 css 提取到指定的文件里
@@ -175,9 +174,10 @@ module.exports = {
     },
     resolve: {
         extensions: [".ts", ".js", ".css"],
-        alias: {
-            "@": path.resolve(__dirname, "../src"),
-        },
+        // alias: {
+        //     "@": path.resolve(__dirname, "../src"),
+
+        // },
     },
     optimization: {
         splitChunks: {
